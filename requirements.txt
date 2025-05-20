@@ -1,0 +1,41 @@
+try to impliment
+
+feacherse-> 
+    create account
+    login   
+    update profile
+    feed page-explore
+    send connection reqest
+    see out matches
+    see the reqest send /reacive
+
+tech Stack
+    -> BackEnd
+            node.js
+            express
+            mongoDB
+    -> FrontEnd
+
+LLD
+    #DB design
+        -user collection        //for store the user data
+        -connection request     // store the connection data and its status
+
+        ->API
+            -user collection 
+                /signin -> post
+                /login  -> post
+                /profile-> get
+                /profile-> post
+                /profile-> patch
+                /profile-> delete
+                
+            -connection request
+                /sendrequest-> post
+                /overviewrequest-> post
+                /request-> get
+                /connection-> get
+
+            -> CRUD Operation 
+                -
+
