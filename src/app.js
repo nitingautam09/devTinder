@@ -10,7 +10,9 @@ app.listen(3000,()=>{
 //     res.send("request have made for home")
 // })
 
-app.get("/user",(req,res)=>{
+app.get("/user/:id",(req,res)=>{
+    // console.log(req.query)
+    console.log(req.params)
     res.send({name:'nitin',age:'30'})
 })
 
