@@ -25,6 +25,8 @@
   "homepage": "https://github.com/nitingautam09/devTinder#readme",
   "dependencies": {
     "express": "^5.1.0",
+    "mongodb": "^6.16.0",
+    "mongoose": "^8.15.0",
     "nodemon": "^3.1.10"
   }
 }
