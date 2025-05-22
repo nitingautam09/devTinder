@@ -1,57 +1,37 @@
 const express = require("express")
-
+const connectDB = require('./config/dataBase');
+const User = require("./models/user");
 const app = express();
 
-app.listen(3000,()=>{
-    console.log("listing on the port 3000...")
+//post api signup
+app.post('/signup',async (req,res)=>{
+
+    //creating the new instance of the user model
+    const user = new User({
+        firstName:"nitin",
+        lastName:"gautam",
+        email:'exmaple.com',
+        password:"ecamplpass"
+    })
+    try{
+        const responce = await user.save();
+        console.log('reds---',responce)
+        res.send(`${responce.firstName} ${responce.lastName} signup succsessfuly`)
+    }catch(err){
+        res.send(`found ${err}`)
+    }
+
 })
 
-// app.use("/",(req,res)=>{
-//     res.send("request have made for home")
-// })
 
-// app.get("/user/:id",(req,res)=>{
-//     // console.log(req.query)
-//     console.log(req.params)
-//     res.send({name:'nitin',age:'30'})
-// })
+connectDB()
+.then(() => {
+    console.log('CONNECTION STABLISH')
+    app.listen(3000, () => {
+        console.log("listing on the port 3000...")
+    })
+}).catch((err) => {
+    console.error(err)
+})
 
-// app.post('/user',(req,res)=>{
-//     // console.log("saving data to the DB")
-//     //saving data to the db
-//     res.send('data save sucessfully in DB')
-// })
-
-// app.delete('/user',(req,res)=>{
-//     res.send('delete the uer sucessfully')
-// })
-
-// app.use('/user',
-//     (req,res,next)=>{
-//     // 1st router handler
-//     // res.send("rout")
-//     console.log("inside the 1st route");
-//     next();
-//     },
-//     (req,res,next)=>{
-//     // 2nd router handler
-//     console.log("inside the 2nd route")
-//     res.send("rout")
-//     }
-// )
-
-app.use('/test',router1,router2,router3)
-
-function router1(req,res,next){
-    console.log("first rout");
-    next();
-}
-function router2(req,res,next){
-    console.log('second rout');
-    next();
-}
-function router3(req,res){
-    console.log('3rd rout')
-    res.send('in 3rd rout')
-}
 
