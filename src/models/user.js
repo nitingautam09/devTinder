@@ -1,5 +1,6 @@
 
 const mongoose = require('mongoose')
+const validator = require('validator')
 
 const userSchemObj = {
     firstName: {
@@ -20,11 +21,21 @@ const userSchemObj = {
         required: true,
         lowercase: true,
         unique: true,
-        trim: true
+        trim: true,
+        validate(val){
+            if(!validator.isEmail(val)){
+                throw new Error('Please enter valid Email address');
+            }
+        }
     },
     password: {
         type: String,
         required: true,
+        validate(val){
+            if(!validator.isStrongPassword(val)){
+                throw new Error('Please enter Strong Password');
+            }
+        }
     },
     age: {
         type: Number
@@ -38,6 +49,15 @@ const userSchemObj = {
             }
         }
     },
+    skills: {
+    type: [String],
+    validate: {
+      validator: function (val) {
+        return val.length <= 5;
+      },
+      message: 'You can only add up to 5 skills.'
+    }
+  }
 }
 
 const userSchema = new mongoose.Schema(userSchemObj,{timestamps:true})

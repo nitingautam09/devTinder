@@ -2,29 +2,53 @@ const express = require("express")
 const connectDB = require('./config/dataBase');
 const User = require("./models/user");
 const app = express();
+const bcrypt = require('bcrypt')
+const {validateTheSignUpData} = require('./utils/validation')
 
 //moiddleware for the JSON handle 
 app.use(express.json()); //its a middleware
 
-
 //post api signup
-
 //API for create the user
 app.post('/signup', async (req, res) => {
-
-    const user = new User(req.body)
+    const {firstName,lastName,email, password,age,skills,gender} = req.body;
     try {
+        validateTheSignUpData(req.body);//validator uisng the api validator
+        const hashPassword = await bcrypt.hash(req.body.password, 10); //encripting the function
+        const user = new User({firstName,lastName,email, password:hashPassword,age,skills,gender}) // created instance
+        //adding the user to the DB
         const responce = await user.save();
+        //sending the res to user
         res.send(`${responce.firstName} ${responce.lastName} signup succsessfuly`)
-    } catch (err) {
-        if(err.code==11000){
-            res.send('Email already registered. Please use a different email.')
-        }else{
 
-            res.send(err)
-        }
+    } catch (err) {
+        //catching all errors
+            const errorData = err.message ? err.message : err;
+            res.send("Error:"+ errorData)
     }
 
+})
+
+//Login API
+app.post('/login',async(req,res)=>{
+    const {email,password} = req.body;
+    try{
+    const user = await User.findOne({email:email})
+    if(!user){
+        throw new Error("invalid creadential")
+    }
+    const isValidPassword = await bcrypt.compare(password, user.password);
+    if(isValidPassword){
+        res.cookie("token",'asdfasdfasdfasdfasdf')//set cookies
+        res.send('login succsess')
+    }else{
+        throw new Error("invalid creadential")
+    }
+    }catch (err) {
+        //catching all errors
+            const errorData = err.message ? err.message : err;
+            res.send("Error:"+ errorData)
+    }
 })
 
 //API for fetch the single user By email
@@ -57,12 +81,19 @@ app.get("/feed", async (req, res) => {
 })
 
 //update the user 
-app.patch('/user',async (req,res)=>{
-    const userId = req.body.userId
+app.patch('/user/:userId',async (req,res)=>{
+    const userId = req.params.userId
     const data = req.body
+    const UPDATE_ALLOWED= ['skill','password','age','firstName','lastName']
+    const invalidKeys = Object.keys(data).filter(k => !UPDATE_ALLOWED.includes(k));
     try{
-        const updatedUser = await User.findByIdAndUpdate(userId,data,{'returnDocument':'after'})
+        if(invalidKeys.length==0){
+            const updatedUser = await User.findByIdAndUpdate(userId,data,{'returnDocument':'after'})
             res.send(updatedUser)
+        }else{
+             res.status(400).send(`${invalidKeys.join()} are not allow to update`)
+        }
+        throw new Error("error ")
     }catch(err){
         res.status(400).send("somethings went wrong")
     }

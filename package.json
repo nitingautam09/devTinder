@@ -24,9 +24,12 @@
   },
   "homepage": "https://github.com/nitingautam09/devTinder#readme",
   "dependencies": {
+    "bcrypt": "^6.0.0",
+    "cookie-parser": "^1.4.7",
     "express": "^5.1.0",
     "mongodb": "^6.16.0",
     "mongoose": "^8.15.0",
-    "nodemon": "^3.1.10"
+    "nodemon": "^3.1.10",
+    "validator": "^13.15.0"
   }
 }
