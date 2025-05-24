@@ -1,6 +1,8 @@
 
 const mongoose = require('mongoose')
 const validator = require('validator')
+const jwt = require('jsonwebtoken');
+const bcrypt = require('bcrypt')
 
 const userSchemObj = {
     firstName: {
@@ -61,6 +63,19 @@ const userSchemObj = {
 }
 
 const userSchema = new mongoose.Schema(userSchemObj,{timestamps:true})
+
+//// Genereting the Token using the JWT
+userSchema.methods.getJWT=async function(){
+   const token =  jwt.sign({_id:this._id},"Node.js@Dev@Tinder",{expiresIn:'1d'});
+   return token;
+}
+
+//validating the pwd using the brypt librery
+userSchema.methods.validatePassword= async function (passwordInputByUser) {
+    const hashPassword = this.password;
+    const isValid = await bcrypt.compare(passwordInputByUser,hashPassword)
+    return isValid;
+}
 
 const User = mongoose.model("User", userSchema);
 
